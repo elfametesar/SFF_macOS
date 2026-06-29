@@ -1,0 +1,46 @@
+name: Build Windows Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      push_as_release:
+        description: 'Push result as a GitHub Release?'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Apply macOS adjustments patch
+        run: |
+          git apply macos_adjustments.patch
+
+      - name: Build Installer
+        shell: cmd
+        run: |
+          :: Run the build script in NSI-only mode if needed, 
+          :: or just run the standard script
+          call build_installer.bat
+
+      - name: Create Release
+        if: ${{ github.event.inputs.push_as_release == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SteaMidra-*-Setup.exe
+          token: ${{ secrets.GITHUB_TOKEN }}
