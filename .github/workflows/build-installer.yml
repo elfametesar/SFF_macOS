@@ -13,33 +13,29 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Apply macOS adjustments patch
+      - shell: cmd
         run: |
-          git apply macos_adjustments.patch
+          choco install nsis -y
+          if not exist "C:\Program Files (x86)\NSIS" mkdir "C:\Program Files (x86)\NSIS"
+          copy "C:\ProgramData\chocolatey\bin\makensis.exe" "C:\Program Files (x86)\NSIS\makensis.exe" /Y
 
-      - name: Build Installer
-        shell: cmd
-        run: |
-          :: Run the build script in NSI-only mode if needed, 
-          :: or just run the standard script
-          call build_installer.bat
+      - run: git apply macos_adjustments.patch
 
-      - name: Create Release
-        if: ${{ github.event.inputs.push_as_release == 'true' }}
+      - shell: cmd
+        run: call build_installer.bat
+
+      - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
         with:
           files: SteaMidra-*-Setup.exe
