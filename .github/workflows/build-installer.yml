@@ -7,6 +7,10 @@ on:
         required: true
         default: false
         type: boolean
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
