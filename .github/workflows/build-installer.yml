@@ -24,11 +24,13 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - shell: cmd
+      - name: Setup NSIS Environment
+        shell: cmd
         run: |
           choco install nsis -y
           if not exist "C:\Program Files (x86)\NSIS" mkdir "C:\Program Files (x86)\NSIS"
-          copy "C:\ProgramData\chocolatey\bin\makensis.exe" "C:\Program Files (x86)\NSIS\makensis.exe" /Y
+          if exist "C:\Program Files (x86)\NSIS\makensis.exe" del "C:\Program Files (x86)\NSIS\makensis.exe"
+          copy "C:\ProgramData\chocolatey\lib\nsis\tools\makensis.exe" "C:\Program Files (x86)\NSIS\makensis.exe" /Y
 
       - run: git apply macos_adjustments.patch
 
