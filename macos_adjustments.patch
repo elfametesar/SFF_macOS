@@ -1,0 +1,42 @@
+diff --git a/Main_gui.py b/Main_gui.py
+index cc1069f..fd23cdc 100644
+--- a/Main_gui.py
++++ b/Main_gui.py
+@@ -21,6 +21,9 @@ import os
+ import sys
+ from pathlib import Path
+ 
++os.environ["QT_QUICK_BACKEND"] = "software"
++os.environ["QT_OPENGL"] = "software"
++
+ # guard the PyQt6 import so a hollow build (CI accident) shows a useful
+ # message instead of just dumping ModuleNotFoundError to a console window
+ # that's already gone. happened once with the v6.3.1 workflow build —
+diff --git a/build_installer.bat b/build_installer.bat
+index 7e9e072..1e39665 100644
+--- a/build_installer.bat
++++ b/build_installer.bat
+@@ -24,6 +24,7 @@ echo [1/2] Building PyInstaller distribution...
+ call .venv\Scripts\activate.bat 2>nul || (
+     echo Activating venv failed — trying system Python
+ )
++
+ python -m PyInstaller build_sff_gui.spec --noconfirm
+ if %errorlevel% neq 0 (
+     echo PyInstaller build failed.
+diff --git a/build_sff_gui.spec b/build_sff_gui.spec
+index 52ffcd8..6fdc048 100644
+--- a/build_sff_gui.spec
++++ b/build_sff_gui.spec
+@@ -80,7 +80,10 @@ if win10toast_data:
+ a = Analysis(
+     ['Main_gui.py'],
+     pathex=[spec_root],
+-    binaries=[],
++    binaries=[
++        ('icuuc.dll', '.'),
++        ('icu.dll', '.')
++    ],
+     datas=datas,
+     hiddenimports=[
+         'PyQt6',
