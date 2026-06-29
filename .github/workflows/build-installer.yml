@@ -1,5 +1,4 @@
 name: Build Windows Installer
-
 on:
   workflow_dispatch:
     inputs:
@@ -8,35 +7,26 @@ on:
         required: true
         default: false
         type: boolean
-
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-
       - name: Setup NSIS Environment
         shell: cmd
         run: |
           choco install nsis -y
-          if not exist "C:\Program Files (x86)\NSIS" mkdir "C:\Program Files (x86)\NSIS"
-          if exist "C:\Program Files (x86)\NSIS\makensis.exe" del "C:\Program Files (x86)\NSIS\makensis.exe"
-          copy "C:\ProgramData\chocolatey\lib\nsis\tools\makensis.exe" "C:\Program Files (x86)\NSIS\makensis.exe" /Y
-
+          echo C:\Program Files (x86)\NSIS>> %GITHUB_PATH%
       - run: git apply macos_adjustments.patch
-
       - shell: cmd
         run: call build_installer.bat
-
       - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
         with:
