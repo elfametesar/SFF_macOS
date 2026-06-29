@@ -1,3 +1,9 @@
+# This is for wine on macOS, not a direct macOS native app
+
+I am not the one who figured this out, I am just automating what I learned from this person on this Reddit topic:
+
+[SteaMidra Solution for Crossover on macOS](https://www.reddit.com/r/PiracyNoRestrictions/comments/1u9v014/steamidra_solution_for_crossover_on_macos/)
+
 # SteaMidra Listed on r/FMHY [FMHY](https://fmhy.net/gaming-tools#steam-epic) and r/Piracy [Piracy](https://www.reddit.com/r/Piracy/wiki/megathread/games/#:~:text=SteaMidra)
 
 *Made by Midrag and his brother!*
