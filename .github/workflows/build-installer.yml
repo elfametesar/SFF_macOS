@@ -10,7 +10,7 @@ on:
       skip_lumacore:
         description: 'Skip building LumaCore?'
         required: true
-        default: true
+        default: false
         type: boolean
 
 permissions:
@@ -69,7 +69,8 @@ jobs:
       - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
+          tag_name: release-${{ github.run_number }}
+          name: SteaMidra Release
           files: |
             SteaMidra-*-Setup.exe
             LumaCore/Releases/Release/dwmapi.dll
