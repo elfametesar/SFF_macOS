@@ -1,4 +1,4 @@
-name: Build Windows Installer
+name: Build macOS Wine Installer
 on:
   workflow_dispatch:
     inputs:
@@ -29,6 +29,10 @@ jobs:
         run: |
           choco install nsis -y
           echo C:\Program Files (x86)\NSIS>> %GITHUB_PATH%
+      - name: Build LumaCore
+        shell: cmd
+        working-directory: LumaCore
+        run: call build.bat --no-pause
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
@@ -38,10 +42,10 @@ jobs:
           name: SteaMidra-build
           path: |
             SteaMidra-*-Setup.exe
-            %BUILD_DIR%\Debug\dwmapi.dll
-            %BUILD_DIR%\Release\dwmapi.dll
-            %BUILD_DIR%\Debug\LumaCore.dll
-            %BUILD_DIR%\Release\LumaCore.dll
+            LumaCore/Releases/Release/dwmapi.dll
+            LumaCore/Releases/Release/LumaCore.dll
+            LumaCore/Releases/Debug/dwmapi.dll
+            LumaCore/Releases/Debug/LumaCore.dll
           if-no-files-found: warn
       - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
@@ -49,8 +53,8 @@ jobs:
           tag_name: build-${{ github.run_number }}
           files: |
             SteaMidra-*-Setup.exe
-            %BUILD_DIR%\Debug\dwmapi.dll
-            %BUILD_DIR%\Release\dwmapi.dll
-            %BUILD_DIR%\Debug\LumaCore.dll
-            %BUILD_DIR%\Release\LumaCore.dll
+            LumaCore/Releases/Release/dwmapi.dll
+            LumaCore/Releases/Release/LumaCore.dll
+            LumaCore/Releases/Debug/dwmapi.dll
+            LumaCore/Releases/Debug/LumaCore.dll
           token: ${{ secrets.GITHUB_TOKEN }}
