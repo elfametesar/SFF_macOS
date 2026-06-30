@@ -6,7 +6,7 @@ I am not the one who figured this out, I am just automating what I learned from 
 
 You can build your own installation by forking this repo and using actions, and build or skip LumaCore. 
 
-***Replace dwmapi.dll from this repo in Steam folder after doing Auto LC Setup from within SteaMidra.***
+***Replace dwmapi.dll from releases with the one in Steam folder after doing Auto LC Setup from within SteaMidra.***
 
 # SteaMidra Listed on r/FMHY [FMHY](https://fmhy.net/gaming-tools#steam-epic) and r/Piracy [Piracy](https://www.reddit.com/r/Piracy/wiki/megathread/games/#:~:text=SteaMidra)
 
