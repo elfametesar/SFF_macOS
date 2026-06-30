@@ -7,6 +7,11 @@ on:
         required: true
         default: false
         type: boolean
+      skip_lumacore:
+        description: 'Skip building LumaCore?'
+        required: true
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -32,33 +37,21 @@ jobs:
           choco install nsis -y
           echo C:\Program Files (x86)\NSIS>> %GITHUB_PATH%
       - name: Setup MSVC
+        if: ${{ inputs.skip_lumacore == false }}
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
       - name: Cache LumaCore build
+        if: ${{ inputs.skip_lumacore == false }}
         uses: actions/cache@v4
         with:
           path: LumaCore/build
           key: lumacore-${{ runner.os }}-${{ hashFiles('LumaCore/source/**') }}
-      - name: Verify MSVC is active
-        shell: cmd
-        run: where cl
       - name: Build LumaCore
+        if: ${{ inputs.skip_lumacore == false }}
         shell: cmd
         working-directory: LumaCore
         run: call build.bat --no-pause
-      - name: Show LumaCore build log
-        if: always()
-        shell: cmd
-        working-directory: LumaCore
-        run: type build_log.txt
-      - name: Upload LumaCore build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lumacore-build-log
-          path: LumaCore/build_log.txt
-          if-no-files-found: warn
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
