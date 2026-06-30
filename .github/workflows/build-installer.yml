@@ -16,6 +16,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -29,10 +31,27 @@ jobs:
         run: |
           choco install nsis -y
           echo C:\Program Files (x86)\NSIS>> %GITHUB_PATH%
+      - name: Cache LumaCore build
+        uses: actions/cache@v4
+        with:
+          path: LumaCore/build
+          key: lumacore-${{ runner.os }}-${{ hashFiles('LumaCore/source/**') }}
       - name: Build LumaCore
         shell: cmd
         working-directory: LumaCore
-        run: call build.bat --no-pause
+        run: call build.bat --no-pause --release-only
+      - name: Show LumaCore build log
+        if: always()
+        shell: cmd
+        working-directory: LumaCore
+        run: type build_log.txt
+      - name: Upload LumaCore build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumacore-build-log
+          path: LumaCore/build_log.txt
+          if-no-files-found: warn
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
