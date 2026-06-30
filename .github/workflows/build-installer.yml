@@ -32,9 +32,25 @@ jobs:
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: SteaMidra-build
+          path: |
+            SteaMidra-*-Setup.exe
+            %BUILD_DIR%\Debug\dwmapi.dll
+            %BUILD_DIR%\Release\dwmapi.dll
+            %BUILD_DIR%\Debug\LumaCore.dll
+            %BUILD_DIR%\Release\LumaCore.dll
+          if-no-files-found: warn
       - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          files: SteaMidra-*-Setup.exe
+          files: |
+            SteaMidra-*-Setup.exe
+            %BUILD_DIR%\Debug\dwmapi.dll
+            %BUILD_DIR%\Release\dwmapi.dll
+            %BUILD_DIR%\Debug\LumaCore.dll
+            %BUILD_DIR%\Release\LumaCore.dll
           token: ${{ secrets.GITHUB_TOKEN }}
