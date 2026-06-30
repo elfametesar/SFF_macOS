@@ -31,17 +31,22 @@ jobs:
         run: |
           choco install nsis -y
           echo C:\Program Files (x86)\NSIS>> %GITHUB_PATH%
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
       - name: Cache LumaCore build
         uses: actions/cache@v4
         with:
           path: LumaCore/build
           key: lumacore-${{ runner.os }}-${{ hashFiles('LumaCore/source/**') }}
+      - name: Verify MSVC is active
+        shell: cmd
+        run: where cl
       - name: Build LumaCore
         shell: cmd
         working-directory: LumaCore
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" 2>nul || call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-          call build.bat --no-pause
+        run: call build.bat --no-pause
       - name: Show LumaCore build log
         if: always()
         shell: cmd
