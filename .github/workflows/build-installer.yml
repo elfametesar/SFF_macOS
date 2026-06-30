@@ -52,6 +52,14 @@ jobs:
         shell: cmd
         working-directory: LumaCore
         run: call build.bat --no-pause
+      - name: Rename LumaCore DLLs to avoid name collisions
+        if: ${{ inputs.skip_lumacore == false }}
+        shell: pwsh
+        run: |
+          Copy-Item "LumaCore/Releases/Release/dwmapi.dll" "LumaCore/Releases/dwmapi-release.dll"
+          Copy-Item "LumaCore/Releases/Release/LumaCore.dll" "LumaCore/Releases/LumaCore-release.dll"
+          Copy-Item "LumaCore/Releases/Debug/dwmapi.dll" "LumaCore/Releases/dwmapi-debug.dll"
+          Copy-Item "LumaCore/Releases/Debug/LumaCore.dll" "LumaCore/Releases/LumaCore-debug.dll"
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
@@ -67,10 +75,10 @@ jobs:
         with:
           name: LumaCore-DLLs
           path: |
-            LumaCore/Releases/Release/dwmapi.dll
-            LumaCore/Releases/Release/LumaCore.dll
-            LumaCore/Releases/Debug/dwmapi.dll
-            LumaCore/Releases/Debug/LumaCore.dll
+            LumaCore/Releases/dwmapi-release.dll
+            LumaCore/Releases/LumaCore-release.dll
+            LumaCore/Releases/dwmapi-debug.dll
+            LumaCore/Releases/LumaCore-debug.dll
           if-no-files-found: warn
       - if: ${{ inputs.push_as_release == true }}
         uses: softprops/action-gh-release@v2
@@ -79,8 +87,8 @@ jobs:
           name: SteaMidra Release
           files: |
             SteaMidra-*-Setup.exe
-            LumaCore/Releases/Release/dwmapi.dll
-            LumaCore/Releases/Release/LumaCore.dll
-            LumaCore/Releases/Debug/dwmapi.dll
-            LumaCore/Releases/Debug/LumaCore.dll
+            LumaCore/Releases/dwmapi-release.dll
+            LumaCore/Releases/LumaCore-release.dll
+            LumaCore/Releases/dwmapi-debug.dll
+            LumaCore/Releases/LumaCore-debug.dll
           token: ${{ secrets.GITHUB_TOKEN }}
