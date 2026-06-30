@@ -55,12 +55,18 @@ jobs:
       - run: git apply macos_adjustments.patch
       - shell: cmd
         run: call build_installer.bat
-      - name: Upload build artifacts
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: SteaMidra-build
+          name: SteaMidra-Installer
+          path: SteaMidra-*-Setup.exe
+          if-no-files-found: warn
+      - name: Upload LumaCore DLLs
+        if: ${{ inputs.skip_lumacore == false }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: LumaCore-DLLs
           path: |
-            SteaMidra-*-Setup.exe
             LumaCore/Releases/Release/dwmapi.dll
             LumaCore/Releases/Release/LumaCore.dll
             LumaCore/Releases/Debug/dwmapi.dll
